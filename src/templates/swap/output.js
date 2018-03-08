@@ -10,7 +10,7 @@ var bigi = require('bigi')
 function check (script) {
   var buffer = bscript.compile(script)
 
-  return buffer.length === 82 &&
+  return buffer.length === 83 &&
     buffer[0] === OPS.OP_IF &&
     buffer[1] === OPS.OP_DUP &&
     buffer[2] === OPS.OP_HASH160 &&
@@ -28,7 +28,8 @@ function check (script) {
     buffer[58] === OPS.OP_HASH160 &&
     buffer[59] === 0x14 &&
     buffer[80] === OPS.OP_EQUALVERIFY &&
-    buffer[81] === OPS.OP_CHECKSIG
+    buffer[81] === OPS.OP_CHECKSIG &&
+    buffer[82] === OPS.OP_ENDIF 
 }
 
 check.toJSON = function () { return 'pubKeyHash2 output' }
