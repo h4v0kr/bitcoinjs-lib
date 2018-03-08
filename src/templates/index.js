@@ -7,6 +7,7 @@ var scriptHash = require('./scripthash')
 var witnessPubKeyHash = require('./witnesspubkeyhash')
 var witnessScriptHash = require('./witnessscripthash')
 var witnessCommitment = require('./witnesscommitment')
+var swap = require('./swap')
 
 var types = {
   MULTISIG: 'multisig',
@@ -17,7 +18,8 @@ var types = {
   P2SH: 'scripthash',
   P2WPKH: 'witnesspubkeyhash',
   P2WSH: 'witnessscripthash',
-  WITNESS_COMMITMENT: 'witnesscommitment'
+  WITNESS_COMMITMENT: 'witnesscommitment',
+  SWAP: 'swap',
 }
 
 function classifyOutput (script) {
@@ -25,6 +27,7 @@ function classifyOutput (script) {
   if (witnessScriptHash.output.check(script)) return types.P2WSH
   if (pubKeyHash.output.check(script)) return types.P2PKH
   if (scriptHash.output.check(script)) return types.P2SH
+  if (swap.output.check(script)) return types.SWAP
 
   // XXX: optimization, below functions .decompile before use
   var chunks = decompile(script)
@@ -44,6 +47,7 @@ function classifyInput (script, allowIncomplete) {
   if (scriptHash.input.check(chunks, allowIncomplete)) return types.P2SH
   if (multisig.input.check(chunks, allowIncomplete)) return types.MULTISIG
   if (pubKey.input.check(chunks)) return types.P2PK
+  if (swap.input.check(chunks)) return types.SWAP
 
   return types.NONSTANDARD
 }
@@ -70,5 +74,6 @@ module.exports = {
   witnessPubKeyHash: witnessPubKeyHash,
   witnessScriptHash: witnessScriptHash,
   witnessCommitment: witnessCommitment,
+  swap: swap,
   types: types
 }

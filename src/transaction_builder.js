@@ -500,6 +500,24 @@ TransactionBuilder.prototype.setVersion = function (version) {
   this.tx.version = version
 }
 
+TransactionBuilder.fromScript = function (pkey, secret, redeemScript, address, txid, inputNum, value, network) {
+  var hashType = Transaction.SIGHASH_ALL;
+  var txb = new TransactionBuilder(network)
+  txb.addInput(txid, inputNum)
+  txb.addOutput(pkey.getAddress(), value)
+  var txRaw = txb.buildIncomplete()
+  var signatureHash = txRaw.hashForSignature(0, redeemScript, hashType)
+  console.log("scriptSig",pkey.sign(signatureHash).toScriptSignature(hashType).toString('hex'));
+  var redeemScriptSig = bscript.scriptHash.input.encode([
+      secret,
+      pkey.sign(signatureHash).toScriptSignature(hashType),
+      pkey.getPublicKeyBuffer(),
+      ops.OP_TRUE
+  ], redeemScript);
+  txRaw.setInputScript(0, redeemScriptSig)
+  return txRaw.toHex();
+}
+
 TransactionBuilder.fromTransaction = function (transaction, network) {
   var txb = new TransactionBuilder(network)
 
