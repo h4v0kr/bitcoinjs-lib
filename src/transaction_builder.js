@@ -501,7 +501,6 @@ TransactionBuilder.prototype.setVersion = function (version) {
 }
 
 
-console.log("Refund", bitcoin.TransactionBuilder.fromRefundScript(aQ, aliceToBobRedeemScript, aQ.getPublicKeyBuffer(), 'd1b9bde9cfc7920cff4b1c7cdcb67b480e7c2eb3c120b0bec1ad0d833821e2b4', 1, 9999000, testnet));
 
 
 TransactionBuilder.fromRefundScript = function (pkey, redeemScript, address, txid, inputNum, value, network) {
