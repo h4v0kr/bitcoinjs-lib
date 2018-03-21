@@ -500,6 +500,27 @@ TransactionBuilder.prototype.setVersion = function (version) {
   this.tx.version = version
 }
 
+
+console.log("Refund", bitcoin.TransactionBuilder.fromRefundScript(aQ, aliceToBobRedeemScript, aQ.getPublicKeyBuffer(), 'd1b9bde9cfc7920cff4b1c7cdcb67b480e7c2eb3c120b0bec1ad0d833821e2b4', 1, 9999000, testnet));
+
+
+TransactionBuilder.fromRefundScript = function (pkey, redeemScript, address, txid, inputNum, value, network) {
+  var hashType = Transaction.SIGHASH_ALL;
+  var txb = new TransactionBuilder(network)
+  txb.addInput(txid, inputNum)
+  txb.addOutput(pkey.getAddress(), value)
+  var txRaw = txb.buildIncomplete()
+  var signatureHash = txRaw.hashForSignature(0, redeemScript, hashType)
+  console.log("scriptSig",pkey.sign(signatureHash).toScriptSignature(hashType).toString('hex'));
+  var redeemScriptSig = bscript.scriptHash.input.encode([
+      pkey.sign(signatureHash).toScriptSignature(hashType),
+      pkey.getPublicKeyBuffer(),
+      ops.OP_FALSE
+  ], redeemScript);
+  txRaw.setInputScript(0, redeemScriptSig)
+  return txRaw.toHex();
+};
+
 TransactionBuilder.fromScript = function (pkey, secret, redeemScript, address, txid, inputNum, value, network) {
   var hashType = Transaction.SIGHASH_ALL;
   var txb = new TransactionBuilder(network)
