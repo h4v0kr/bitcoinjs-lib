@@ -1,6 +1,7 @@
 // {signature} {pubKey}
 var bscript = require('../../script')
 var typeforce = require('typeforce')
+var OPS = require('bitcoin-ops')
 
 function check (script) {
   var chunks = bscript.decompile(script)
@@ -11,20 +12,24 @@ function check (script) {
 }
 check.toJSON = function () { return 'pubKeyHash input' }
 
-function encodeStack (signature, pubKey) {
+function encodeStack (signature, pubKey, secret, isRedeem) {
   typeforce({
     signature: bscript.isCanonicalSignature,
-    pubKey: bscript.isCanonicalPubKey
+    pubKey: bscript.isCanonicalPubKey,
+    secret: bscript.isCanonicalSecret
   }, {
     signature: signature,
-    pubKey: pubKey
+    pubKey: pubKey,
+    secret: secret
   })
 
-  return [signature, pubKey]
+  const redeem = isRedeem ? OPS.OP_TRUE : OPS.OP_FALSE
+
+  return [signature, redeem, pubKey, secret]
 }
 
-function encode (signature, pubKey) {
-  return bscript.compile(encodeStack(signature, pubKey))
+function encode (signature, pubKey, secret, isRedeem) {
+  return bscript.compile(encodeStack(signature, pubKey, secret, isRedeem))
 }
 
 function decodeStack (stack) {
@@ -33,7 +38,9 @@ function decodeStack (stack) {
 
   return {
     signature: stack[0],
-    pubKey: stack[1]
+    redeem: stack[1],
+    pubKey: stack[2],
+    secret: stack[3]
   }
 }
 
