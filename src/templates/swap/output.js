@@ -10,26 +10,23 @@ var bigi = require('bigi')
 function check (script) {
   var buffer = bscript.compile(script)
 
-  return buffer.length === 83 &&
-    buffer[0] === OPS.OP_IF &&
-    buffer[1] === OPS.OP_DUP &&
-    buffer[2] === OPS.OP_HASH160 &&
-    buffer[3] === 0x14 &&
-    buffer[24] === OPS.OP_EQUALVERIFY &&
-    buffer[25] === OPS.OP_CHECKSIGVERIFY &&
-    buffer[26] === OPS.OP_HASH160 &&
+  return buffer.length === 80 &&
+    buffer[0] === OPS.OP_HASH160 &&
+    buffer[1] === 0x14 &&
+    buffer[22] === OPS.OP_EQUALVERIFY &&
+    buffer[23] === OPS.OP_DUP &&
+    buffer[24] === OPS.OP_HASH160 &&
+    buffer[25] === OPS.OP_ROT &&
+    buffer[26] === OPS.OP_IF &&
     buffer[27] === 0x14 &&
-    buffer[48] === OPS.OP_EQUAL &&
-    buffer[49] === OPS.OP_ELSE &&
-    buffer[50] === 0x04 &&
-    buffer[55] === OPS.OP_CHECKLOCKTIMEVERIFY &&
-    buffer[56] === OPS.OP_DROP &&
-    buffer[57] === OPS.OP_DUP &&
-    buffer[58] === OPS.OP_HASH160 &&
-    buffer[59] === 0x14 &&
-    buffer[80] === OPS.OP_EQUALVERIFY &&
-    buffer[81] === OPS.OP_CHECKSIG &&
-    buffer[82] === OPS.OP_ENDIF
+    buffer[48] === OPS.OP_ELSE &&
+    buffer[49] === 0x04 &&
+    buffer[54] === OPS.OP_CHECKLOCKTIMEVERIFY &&
+    buffer[55] === OPS.OP_DROP &&
+    buffer[56] === 0x14 &&
+    buffer[77] === OPS.OP_ENDIF &&
+    buffer[78] === OPS.OP_EQUALVERIFY &&
+    buffer[79] === OPS.OP_CHECKSIG
 }
 
 check.toJSON = function () { return 'pubKeyHash2 output' }
@@ -48,16 +45,15 @@ function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
     OPS.OP_HASH160,
     secretHash,
     OPS.OP_EQUALVERIFY,
-    OPS.OP_IF,
     OPS.OP_DUP,
     OPS.OP_HASH160,
+    OPS.OP_ROT,
+    OPS.OP_IF,
     pubKeyHash,
     OPS.OP_ELSE,
     nLockTime2,
     OPS.OP_CHECKLOCKTIMEVERIFY,
     OPS.OP_DROP,
-    OPS.OP_DUP,
-    OPS.OP_HASH160,
     refundPubKeyHash,
     OPS.OP_ENDIF,
     OPS.OP_EQUALVERIFY,
