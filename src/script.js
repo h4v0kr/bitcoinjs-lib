@@ -215,6 +215,7 @@ module.exports = {
 
   isCanonicalPubKey: isCanonicalPubKey,
   isCanonicalSignature: isCanonicalSignature,
+  isCanonicalSecret: isCanonicalSecret,
   isPushOnly: isPushOnly,
   isDefinedHashType: isDefinedHashType
 }
