@@ -29,7 +29,7 @@ function check (script) {
     buffer[59] === 0x14 &&
     buffer[80] === OPS.OP_EQUALVERIFY &&
     buffer[81] === OPS.OP_CHECKSIG &&
-    buffer[82] === OPS.OP_ENDIF 
+    buffer[82] === OPS.OP_ENDIF
 }
 
 check.toJSON = function () { return 'pubKeyHash2 output' }
@@ -45,15 +45,13 @@ function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
   let nLockTime2 = bigi.fromHex(nLockTime1.toString(16)).toBuffer();
 
   return bscript.compile([
+    OPS.OP_HASH160,
+    secretHash,
+    OPS.OP_EQUALVERIFY,
     OPS.OP_IF,
     OPS.OP_DUP,
     OPS.OP_HASH160,
     pubKeyHash,
-    OPS.OP_EQUALVERIFY,
-    OPS.OP_CHECKSIGVERIFY,
-    OPS.OP_HASH160,
-    secretHash,
-    OPS.OP_EQUAL,
     OPS.OP_ELSE,
     nLockTime2,
     OPS.OP_CHECKLOCKTIMEVERIFY,
@@ -61,9 +59,9 @@ function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
     OPS.OP_DUP,
     OPS.OP_HASH160,
     refundPubKeyHash,
+    OPS.OP_ENDIF,
     OPS.OP_EQUALVERIFY,
-    OPS.OP_CHECKSIG,
-    OPS.OP_ENDIF
+    OPS.OP_CHECKSIG
   ])
 }
 
