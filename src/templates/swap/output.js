@@ -1,8 +1,17 @@
-// OP_DUP OP_HASH160 {secretHash} OP_EQUALVERIFY {pubKeyHash} OP_CHECKSIG
+// OP_HASH160 {secretHash} OP_EQUALVERIFY
+// OP_DUP OP_HASH160 OP_ROT
+// OP_IF
+//     {pubKeyHash}
+// OP_ELSE
+//     {nLocktime} OP_CHECKLOCKTIMEVERIFY OP_DROP
+//     {refundPubKeyHash}
+// OP_ENDIF
+// OP_EQUALVERIFY OP_CHECKSIG
 
 var bscript = require('../../script')
 var types = require('../../types')
 var crypto = require('../../crypto')
+var networks = require('../../networks')
 var typeforce = require('typeforce')
 var OPS = require('bitcoin-ops')
 var bigi = require('bigi')
@@ -37,7 +46,7 @@ function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
   typeforce(types.Hash160bit, refundPubKeyHash)
   typeforce(types.Hash160bit, pubKeyHash)
 
-  let now = new Date();
+  let now = Date.now();
   let nLockTime1 = Math.round(now.getTime() / 1000) + nLocktime;
   let nLockTime2 = bigi.fromHex(nLockTime1.toString(16)).toBuffer();
 
@@ -68,7 +77,7 @@ function decode (buffer) {
 }
 
 
-function createP2SH(redeemScript, network) {
+function createP2SH (redeemScript, network) {
   network = network || networks.bitcoin
   var address = require('../../address');
   var scriptPubKey = bscript.scriptHash.output.encode(crypto.hash160(redeemScript));
