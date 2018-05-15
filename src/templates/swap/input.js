@@ -40,8 +40,8 @@ function decodeStack (stack) {
   return {
     signature: stack[0],
     redeem: stack[1],
-    pubKey: stack[2],
-    secret: stack[3]
+    secret: stack[2],
+    pubKey: stack[3]
   }
 }
 
