@@ -9,6 +9,11 @@ function rng () {
   return Buffer.from('YT8dAtK4d16A3P1z+TpwB2jJ4aFH3g9M1EioIBkLEV4=', 'base64')
 }
 
+function mockDateNow() {
+  // mock now = 1462361249717ms = 4th May 2016
+  return 1462361249717;
+}
+
 describe('bitcoinjs-lib (transactions)', function () {
   it('can create a 1-to-1 Transaction', function () {
     var alice = bitcoin.ECPair.fromWIF('L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy')
@@ -237,7 +242,9 @@ describe('bitcoinjs-lib (transactions)', function () {
   })
 
   it('can create swap with input and output', function() {
-    var txHex = '01000000019d344070eac3fe6e394a16d06d7704a7d5c0a10eb2a2c16bc98842b7cc20d561102700006a47304402201ca6c20d5b3260e9d3c1fbdccd96b76d9da39ec4786c018b4c32d12508e6619a02204716c325594ec503189add29c2ed7502be70c48d3ca2c65b9596186e77ae3831012103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff0128230000000000001976a9140955b9c8971ab2ae4a898aa3ee5892854500cf3688ac00000000'
+    Date.now = mockDateNow
+
+    var txHex = '01000000013077d9de049574c3af9bc9c09a7c9db80f2d94caaf63988c9166249b955e867d000000006a473044022069b5429f9cd15384e45631d63d81b3ab41189319999e827aa2cadba880ca5da2022056b011bd3e333b2dd1e2edcdd3954ecfb580df442185fe3130262aab39913a11012103df7940ee7cddd2f97763f67e1fb13488da3fbdd7f9c68ec5ef0864074745a289ffffffff01f88f0400000000001976a9149a6b60f74a6bae176df05c3b0a118f85bab5c58588ac00000000'
 
     var tx = bitcoin.Transaction.fromHex(txHex)
 
@@ -255,7 +262,7 @@ describe('bitcoinjs-lib (transactions)', function () {
 
     var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, refundPubKeyHash, pubKeyHash, 0)
 
-    txb.addOutput(scriptPubKey, 6e3)
+    txb.addOutput(scriptPubKey, 298000)
 
     var txRaw = txb.buildIncomplete()
 
@@ -270,6 +277,6 @@ describe('bitcoinjs-lib (transactions)', function () {
 
     txRaw.setInputScript(0, redeemScriptSig)
 
-    assert.strictEqual(txRaw.toHex(), '010000000106ab9f82a42e74e7d998a4d275271d2843fc31046384950c698fd3ebd964387f401f0000804730440220335b1cd5fe29c10adc786bd09d6c6a26877d76c1f456543e3ce05b1a3ad385a902204ec96a57e8bf39f8d48d20fbfae0fe15d163fada927154a06853932895634d7c01512103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baac14d1b64100879ad93ceaa3c15929b6fe8550f54967ffffffff01701700000000000050a914d1b64100879ad93ceaa3c15929b6fe8550f549678876a97b63140955b9c8971ab2ae4a898aa3ee5892854500cf3667045afa3536b175149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000')
+    assert.strictEqual(txRaw.toHex(), '01000000011dd70ec77d6b71b57617b743de1f8d305d2b817e4871094b43ed8e8d250d251a00000000814830450221009d371948925d815e4b09ad62f9f63ec602fc6c43a3e7605fc46bf50060cf61b002204ed47232681f91f03cdab7430a103bed0f9caf9e223a72786eb21f9136ad90f5015114d1b64100879ad93ceaa3c15929b6fe8550f549672103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff01108c0400000000005076a97263a914d1b64100879ad93ceaa3c15929b6fe8550f5496788140955b9c8971ab2ae4a898aa3ee5892854500cf3667045729dca2b16d149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000')
   })
 })
