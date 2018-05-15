@@ -247,7 +247,7 @@ describe('bitcoinjs-lib (transactions)', function () {
     var hashType = bitcoin.Transaction.SIGHASH_ALL;
 
     var txb = new bitcoin.TransactionBuilder(regtest)
-    txb.addInput(tx.getId(), 8e3)
+    txb.addInput(tx.getId(), 0)
 
     var refundPubKeyHash = bitcoin.crypto.hash160(alice.getPublicKeyBuffer())
     var pubKeyHash = bitcoin.crypto.hash160(bob.getPublicKeyBuffer())
