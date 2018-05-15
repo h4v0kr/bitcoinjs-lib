@@ -235,4 +235,41 @@ describe('bitcoinjs-lib (transactions)', function () {
       assert.strictEqual(keyPair.verify(hash, ss.signature), true)
     })
   })
+
+  it('can create swap with input and output', function() {
+    var txHex = '01000000019d344070eac3fe6e394a16d06d7704a7d5c0a10eb2a2c16bc98842b7cc20d561102700006a47304402201ca6c20d5b3260e9d3c1fbdccd96b76d9da39ec4786c018b4c32d12508e6619a02204716c325594ec503189add29c2ed7502be70c48d3ca2c65b9596186e77ae3831012103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff0128230000000000001976a9140955b9c8971ab2ae4a898aa3ee5892854500cf3688ac00000000'
+
+    var tx = bitcoin.Transaction.fromHex(txHex)
+
+    var alice = bitcoin.ECPair.fromWIF('L1Knwj9W3qK3qMKdTvmg3VfzUs3ij2LETTFhxza9LfD5dngnoLG1')
+    var bob = bitcoin.ECPair.fromWIF('KwcN2pT3wnRAurhy7qMczzbkpY5nXMW2ubh696UBc1bcwctTx26z')
+
+    var hashType = bitcoin.Transaction.SIGHASH_ALL;
+
+    var txb = new bitcoin.TransactionBuilder(regtest)
+    txb.addInput(tx.getId(), 0)
+
+    var refundPubKeyHash = bitcoin.crypto.hash160(alice.getPublicKeyBuffer())
+    var pubKeyHash = bitcoin.crypto.hash160(bob.getPublicKeyBuffer())
+    var secretHash = bitcoin.crypto.hash160('secret')
+
+    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, refundPubKeyHash, pubKeyHash, 0)
+
+    txb.addOutput(scriptPubKey, 6e3)
+
+    var txRaw = txb.buildIncomplete()
+
+    var signatureHash = txRaw.hashForSignature(0, tx.outs[0].script, hashType)
+
+    var redeemScriptSig = bitcoin.script.swap.input.encode(
+        alice.sign(signatureHash).toScriptSignature(hashType),
+        alice.getPublicKeyBuffer(),
+        true,
+        secretHash
+    );
+
+    txRaw.setInputScript(0, redeemScriptSig)
+
+    assert.strictEqual(txRaw.toHex(), '010000000106ab9f82a42e74e7d998a4d275271d2843fc31046384950c698fd3ebd964387f401f0000804730440220335b1cd5fe29c10adc786bd09d6c6a26877d76c1f456543e3ce05b1a3ad385a902204ec96a57e8bf39f8d48d20fbfae0fe15d163fada927154a06853932895634d7c01512103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baac14d1b64100879ad93ceaa3c15929b6fe8550f54967ffffffff01701700000000000050a914d1b64100879ad93ceaa3c15929b6fe8550f549678876a97b63140955b9c8971ab2ae4a898aa3ee5892854500cf3667045afa3536b175149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000')
+  })
 })

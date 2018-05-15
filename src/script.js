@@ -198,6 +198,10 @@ function isCanonicalSignature (buffer) {
   return bip66.check(buffer.slice(0, -1))
 }
 
+function isCanonicalSecret (buffer) {
+  return Buffer.isBuffer(buffer)
+}
+
 module.exports = {
   compile: compile,
   decompile: decompile,
@@ -209,6 +213,7 @@ module.exports = {
 
   isCanonicalPubKey: isCanonicalPubKey,
   isCanonicalSignature: isCanonicalSignature,
+  isCanonicalSecret: isCanonicalSecret,
   isPushOnly: isPushOnly,
   isDefinedHashType: isDefinedHashType
 }
