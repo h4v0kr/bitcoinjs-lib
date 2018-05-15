@@ -47,7 +47,7 @@ function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
   typeforce(types.Hash160bit, pubKeyHash)
 
   let now = Date.now();
-  let nLockTime1 = Math.round(now.getTime() / 1000) + nLocktime;
+  let nLockTime1 = Math.round(now / 1000) + nLocktime;
   let nLockTime2 = bigi.fromHex(nLockTime1.toString(16)).toBuffer();
 
   return bscript.compile([
