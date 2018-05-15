@@ -260,7 +260,7 @@ describe('bitcoinjs-lib (transactions)', function () {
     var pubKeyHash = bitcoin.crypto.hash160(bob.getPublicKeyBuffer())
     var secretHash = bitcoin.crypto.hash160('secret')
 
-    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, refundPubKeyHash, pubKeyHash, 0)
+    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, pubKeyHash, refundPubKeyHash, 0)
 
     txb.addOutput(scriptPubKey, 298000)
 

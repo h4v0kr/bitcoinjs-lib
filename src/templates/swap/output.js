@@ -3,7 +3,7 @@
 // OP_IF
 //     {pubKeyHash}
 // OP_ELSE
-//     {nLocktime} OP_CHECKLOCKTIMEVERIFY OP_DROP
+//     {nLockTime} OP_CHECKLOCKTIMEVERIFY OP_DROP
 //     {refundPubKeyHash}
 // OP_ENDIF
 // OP_EQUALVERIFY OP_CHECKSIG
@@ -41,13 +41,13 @@ function check (script) {
 check.toJSON = function () { return 'pubKeyHash2 output' }
 
 
-function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
+function encode (secretHash, pubKeyHash, refundPubKeyHash, nLockTime) {
   typeforce(types.Hash160bit, secretHash)
   typeforce(types.Hash160bit, refundPubKeyHash)
   typeforce(types.Hash160bit, pubKeyHash)
 
   let now = Date.now();
-  let nLockTime1 = Math.round(now / 1000) + nLocktime;
+  let nLockTime1 = Math.round(now / 1000) + nLockTime;
   let nLockTime2 = bigi.fromHex(nLockTime1.toString(16)).toBuffer();
 
   return bscript.compile([
