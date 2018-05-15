@@ -199,9 +199,7 @@ function isCanonicalSignature (buffer) {
 }
 
 function isCanonicalSecret (buffer) {
-  if (!Buffer.isBuffer(buffer)) return false
-
-  return true
+  return Buffer.isBuffer(buffer)
 }
 
 module.exports = {
