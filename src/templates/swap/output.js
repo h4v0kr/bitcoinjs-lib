@@ -20,18 +20,18 @@ function check (script) {
   var buffer = bscript.compile(script)
 
   return buffer.length === 80 &&
-    buffer[0] === OPS.OP_HASH160 &&
-    buffer[1] === 0x14 &&
-    buffer[22] === OPS.OP_EQUALVERIFY &&
-    buffer[23] === OPS.OP_DUP &&
-    buffer[24] === OPS.OP_HASH160 &&
-    buffer[25] === OPS.OP_ROT &&
-    buffer[26] === OPS.OP_IF &&
+    buffer[0] === OPS.OP_DUP &&
+    buffer[1] === OPS.OP_HASH160 &&
+    buffer[2] === OPS.OP_2SWAP &&
+    buffer[3] === OPS.OP_IF &&
+    buffer[4] === OPS.OP_HASH160 &&
+    buffer[5] === 0x14 &&
+    buffer[26] === OPS.OP_EQUALVERIFY &&
     buffer[27] === 0x14 &&
     buffer[48] === OPS.OP_ELSE &&
     buffer[49] === 0x04 &&
     buffer[54] === OPS.OP_CHECKLOCKTIMEVERIFY &&
-    buffer[55] === OPS.OP_DROP &&
+    buffer[55] === OPS.OP_2DROP &&
     buffer[56] === 0x14 &&
     buffer[77] === OPS.OP_ENDIF &&
     buffer[78] === OPS.OP_EQUALVERIFY &&
@@ -51,18 +51,18 @@ function encode (secretHash, refundPubKeyHash, pubKeyHash, nLocktime) {
   let nLockTime2 = bigi.fromHex(nLockTime1.toString(16)).toBuffer();
 
   return bscript.compile([
+    OPS.OP_DUP,
+    OPS.OP_HASH160,
+    OPS.OP_2SWAP,
+    OPS.OP_IF,
     OPS.OP_HASH160,
     secretHash,
     OPS.OP_EQUALVERIFY,
-    OPS.OP_DUP,
-    OPS.OP_HASH160,
-    OPS.OP_ROT,
-    OPS.OP_IF,
     pubKeyHash,
     OPS.OP_ELSE,
     nLockTime2,
     OPS.OP_CHECKLOCKTIMEVERIFY,
-    OPS.OP_DROP,
+    OPS.OP_2DROP,
     refundPubKeyHash,
     OPS.OP_ENDIF,
     OPS.OP_EQUALVERIFY,
@@ -74,7 +74,7 @@ function decode (buffer) {
   typeforce(check, buffer)
 
   return {
-    secretHash: buffer.slice(2, 22),
+    secretHash: buffer.slice(6, 26),
     pubKeyHash: buffer.slice(28, 48),
     nLockTime: buffer.slice(50, 54),
     refundPubKeyHash: buffer.slice(57, 77)

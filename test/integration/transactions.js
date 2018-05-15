@@ -264,8 +264,8 @@ describe('bitcoinjs-lib (transactions)', function () {
     var redeemScriptSig = bitcoin.script.swap.input.encode(
         alice.sign(signatureHash).toScriptSignature(hashType),
         alice.getPublicKeyBuffer(),
-        secretHash,
-        true
+        true,
+        secretHash
     );
 
     txRaw.setInputScript(0, redeemScriptSig)

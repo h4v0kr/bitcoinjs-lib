@@ -12,7 +12,7 @@ function check (script) {
 }
 check.toJSON = function () { return 'pubKeyHash input' }
 
-function encodeStack (signature, pubKey, secret, isRedeem) {
+function encodeStack (signature, pubKey, isRedeem, secret) {
   typeforce({
     signature: bscript.isCanonicalSignature,
     pubKey: bscript.isCanonicalPubKey,
@@ -24,12 +24,13 @@ function encodeStack (signature, pubKey, secret, isRedeem) {
   })
 
   const redeem = isRedeem ? OPS.OP_TRUE : OPS.OP_FALSE
+  secret = isRedeem ? secret : OPS.OP_0
 
-  return [signature, redeem, pubKey, secret]
+  return [signature, redeem, secret, pubKey]
 }
 
-function encode (signature, pubKey, secret, isRedeem) {
-  return bscript.compile(encodeStack(signature, pubKey, secret, isRedeem))
+function encode (signature, pubKey, isRedeem, secret) {
+  return bscript.compile(encodeStack(signature, pubKey, isRedeem, secret))
 }
 
 function decodeStack (stack) {
