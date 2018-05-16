@@ -9,7 +9,7 @@ function check (script) {
   return chunks.length === 4 &&
     bscript.isCanonicalSignature(chunks[0]) &&
     bscript.isCanonicalPubKey(chunks[3]) &&
-    bscript.isCanonicalSecret(chunks[2])
+    bscript.isCanonicalSecret(chunks[1])
 }
 check.toJSON = function () { return 'pubKeyHash input' }
 
@@ -17,15 +17,15 @@ function checkRedeem (script) {
   var chunks = bscript.decompile(script)
 
   return check(script) &&
-    chunks[1] === OPS.OP_TRUE
+    chunks[2] === OPS.OP_TRUE
 }
 
 function checkRefund (script) {
   var chunks = bscript.decompile(script)
 
   return check(script) &&
-    chunks[1] === OPS.OP_FALSE &&
-    chunks[2] === OPS.OP_0
+    chunks[2] === OPS.OP_FALSE &&
+    chunks[1] === OPS.OP_0
 }
 
 function encodeStack (signature, pubKey, isRedeem, secret) {
@@ -42,7 +42,7 @@ function encodeStack (signature, pubKey, isRedeem, secret) {
   const redeem = isRedeem ? OPS.OP_TRUE : OPS.OP_FALSE
   secret = isRedeem ? secret : OPS.OP_0
 
-  return [signature, redeem, secret, pubKey]
+  return [signature, secret, redeem, pubKey]
 }
 
 function encode (signature, pubKey, isRedeem, secret) {
@@ -55,8 +55,8 @@ function decodeStack (stack) {
 
   return {
     signature: stack[0],
-    redeem: stack[1],
-    secret: stack[2],
+    secret: stack[1],
+    redeem: stack[2],
     pubKey: stack[3]
   }
 }
