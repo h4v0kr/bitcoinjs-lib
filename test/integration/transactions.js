@@ -289,16 +289,17 @@ describe('bitcoinjs-lib (transactions)', function () {
 
     var signatureHash = txRaw.hashForSignature(0, tx.outs[0].script, hashType)
     var secretHash = bitcoin.crypto.hash160('secret')
+    var secret = Buffer.from('secret')
 
     var redeemScriptSig = bitcoin.script.swap.input.encode(
         bob.sign(signatureHash).toScriptSignature(hashType),
         bob.getPublicKeyBuffer(),
         true,
-        secretHash
+        secret
     );
 
     txRaw.setInputScript(0, redeemScriptSig)
 
-    assert.strictEqual(txRaw.toHex(), '0100000001af83f7e8847d708908140f28056f87c8cfdcdd6d373acb4de528cd2e0e1b7f08000000008148304502210094943f07dcee926eaba5ce3cd1a44024f482cbb56c5083010762d3626d73e4be0220522f0db062975df38f8f5ca5794266bd75530092a3ab10412469217e36e96520015114d1b64100879ad93ceaa3c15929b6fe8550f549672103df7940ee7cddd2f97763f67e1fb13488da3fbdd7f9c68ec5ef0864074745a289ffffffff0104740000000000001976a9140955b9c8971ab2ae4a898aa3ee5892854500cf3688ac00000000')
+    assert.strictEqual(txRaw.toHex(), '0100000001af83f7e8847d708908140f28056f87c8cfdcdd6d373acb4de528cd2e0e1b7f08000000007348304502210094943f07dcee926eaba5ce3cd1a44024f482cbb56c5083010762d3626d73e4be0220522f0db062975df38f8f5ca5794266bd75530092a3ab10412469217e36e965200151067365637265742103df7940ee7cddd2f97763f67e1fb13488da3fbdd7f9c68ec5ef0864074745a289ffffffff0104740000000000001976a9140955b9c8971ab2ae4a898aa3ee5892854500cf3688ac00000000')
   })
 })
