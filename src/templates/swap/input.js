@@ -6,11 +6,27 @@ var OPS = require('bitcoin-ops')
 function check (script) {
   var chunks = bscript.decompile(script)
 
-  return chunks.length === 2 &&
+  return chunks.length === 4 &&
     bscript.isCanonicalSignature(chunks[0]) &&
-    bscript.isCanonicalPubKey(chunks[1])
+    bscript.isCanonicalPubKey(chunks[3]) &&
+    bscript.isCanonicalSecret(chunks[2])
 }
 check.toJSON = function () { return 'pubKeyHash input' }
+
+function checkRedeem (script) {
+  var chunks = bscript.decompile(script)
+
+  return check(script) &&
+    chunks[1] === OPS.OP_TRUE
+}
+
+function checkRefund (script) {
+  var chunks = bscript.decompile(script)
+
+  return check(script) &&
+    chunks[1] === OPS.OP_FALSE &&
+    chunks[2] === OPS.OP_0
+}
 
 function encodeStack (signature, pubKey, isRedeem, secret) {
   typeforce({
