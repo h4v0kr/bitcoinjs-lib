@@ -260,19 +260,19 @@ describe('bitcoinjs-lib (transactions)', function () {
     var pubKeyHash = bitcoin.crypto.hash160(bob.getPublicKeyBuffer())
     var secretHash = bitcoin.crypto.hash160('secret')
 
-    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, pubKeyHash, refundPubKeyHash, 0)
+    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, pubKeyHash, refundPubKeyHash, 1000) // LockTime of 1000 seconds
 
     txb.addOutput(scriptPubKey, 298000)
 
     txb.sign(0, alice)
 
-    assert.strictEqual(txb.build().toHex(), '01000000011dd70ec77d6b71b57617b743de1f8d305d2b817e4871094b43ed8e8d250d251a000000006b4830450221009d371948925d815e4b09ad62f9f63ec602fc6c43a3e7605fc46bf50060cf61b002204ed47232681f91f03cdab7430a103bed0f9caf9e223a72786eb21f9136ad90f5012103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff01108c0400000000005076a97263a914d1b64100879ad93ceaa3c15929b6fe8550f5496788140955b9c8971ab2ae4a898aa3ee5892854500cf3667045729dca2b16d149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000')
+    assert.strictEqual(txb.build().toHex(), '01000000011dd70ec77d6b71b57617b743de1f8d305d2b817e4871094b43ed8e8d250d251a000000006a473044022072b7dbee6b7d33e796688957848457c641d302eb3151eb4cbd13793d662527a402202d499841f42f152eb341c764d4291ca2167cee0a520b41c0aa583c553eeb3aa4012103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff01108c0400000000005076a97263a914d1b64100879ad93ceaa3c15929b6fe8550f5496788140955b9c8971ab2ae4a898aa3ee5892854500cf3667045729e08ab16d149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000')
   })
 
   it('can redeem swap with secret provided', function() {
     Date.now = mockDateNow
 
-    var txHex = '01000000011dd70ec77d6b71b57617b743de1f8d305d2b817e4871094b43ed8e8d250d251a000000006b4830450221009d371948925d815e4b09ad62f9f63ec602fc6c43a3e7605fc46bf50060cf61b002204ed47232681f91f03cdab7430a103bed0f9caf9e223a72786eb21f9136ad90f5012103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff01108c0400000000005076a97263a914d1b64100879ad93ceaa3c15929b6fe8550f5496788140955b9c8971ab2ae4a898aa3ee5892854500cf3667045729dca2b16d149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000'
+    var txHex = '01000000011dd70ec77d6b71b57617b743de1f8d305d2b817e4871094b43ed8e8d250d251a000000006a473044022072b7dbee6b7d33e796688957848457c641d302eb3151eb4cbd13793d662527a402202d499841f42f152eb341c764d4291ca2167cee0a520b41c0aa583c553eeb3aa4012103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff01108c0400000000005076a97263a914d1b64100879ad93ceaa3c15929b6fe8550f5496788140955b9c8971ab2ae4a898aa3ee5892854500cf3667045729e08ab16d149a6b60f74a6bae176df05c3b0a118f85bab5c5856888ac00000000'
 
     var tx = bitcoin.Transaction.fromHex(txHex)
 
@@ -300,6 +300,40 @@ describe('bitcoinjs-lib (transactions)', function () {
 
     txRaw.setInputScript(0, redeemScriptSig)
 
-    assert.strictEqual(txRaw.toHex(), '0100000001af83f7e8847d708908140f28056f87c8cfdcdd6d373acb4de528cd2e0e1b7f08000000007348304502210094943f07dcee926eaba5ce3cd1a44024f482cbb56c5083010762d3626d73e4be0220522f0db062975df38f8f5ca5794266bd75530092a3ab10412469217e36e965200151067365637265742103df7940ee7cddd2f97763f67e1fb13488da3fbdd7f9c68ec5ef0864074745a289ffffffff0104740000000000001976a9140955b9c8971ab2ae4a898aa3ee5892854500cf3688ac00000000')
+    assert.strictEqual(txRaw.toHex(), '010000000189fefebbdfa0b0f8f15e44801ff0e73b7692ae5923a163c4d948baecc7fb0f4b0000000072473044022073f2a3811ba2d175915ede99520a03d9ee1326027c9ea5b1faae2d72883d4d8b02201fa9ec3c355d2ee3a74efa1bd118c06c71ca72c34597ed71e4092ee15e3e1a280151067365637265742103df7940ee7cddd2f97763f67e1fb13488da3fbdd7f9c68ec5ef0864074745a289ffffffff0104740000000000001976a9140955b9c8971ab2ae4a898aa3ee5892854500cf3688ac00000000')
+  })
+
+  it('can refund swap with secret provided', function() {
+    Date.now = mockDateNow + 1001
+
+    var txHex = '01000000013077d9de049574c3af9bc9c09a7c9db80f2d94caaf63988c9166249b955e867d000000006a473044022069b5429f9cd15384e45631d63d81b3ab41189319999e827aa2cadba880ca5da2022056b011bd3e333b2dd1e2edcdd3954ecfb580df442185fe3130262aab39913a11012103df7940ee7cddd2f97763f67e1fb13488da3fbdd7f9c68ec5ef0864074745a289ffffffff01f88f0400000000001976a9149a6b60f74a6bae176df05c3b0a118f85bab5c58588ac00000000'
+
+    var tx = bitcoin.Transaction.fromHex(txHex)
+
+    var alice = bitcoin.ECPair.fromWIF('L1Knwj9W3qK3qMKdTvmg3VfzUs3ij2LETTFhxza9LfD5dngnoLG1')
+    var bob = bitcoin.ECPair.fromWIF('KwcN2pT3wnRAurhy7qMczzbkpY5nXMW2ubh696UBc1bcwctTx26z')
+
+    var hashType = bitcoin.Transaction.SIGHASH_ALL;
+
+    var txb = new bitcoin.TransactionBuilder()
+    txb.addInput(tx.getId(), 0, null, tx.outs[0].script)
+    txb.addOutput(alice.getAddress(), 29700)
+
+    var txRaw = txb.buildIncomplete()
+
+    var signatureHash = txRaw.hashForSignature(0, tx.outs[0].script, hashType)
+    var secretHash = bitcoin.crypto.hash160('secret')
+    var secret = Buffer.from('secret')
+
+    var redeemScriptSig = bitcoin.script.swap.input.encode(
+        alice.sign(signatureHash).toScriptSignature(hashType),
+        alice.getPublicKeyBuffer(),
+        true,
+        secret
+    );
+
+    txRaw.setInputScript(0, redeemScriptSig)
+
+    assert.strictEqual(txRaw.toHex(), '01000000011dd70ec77d6b71b57617b743de1f8d305d2b817e4871094b43ed8e8d250d251a0000000072473044022066975316e4b022c06fcda3d4f2c53c4836d40b6219677f6cecfec272cdc9e3bc022015bd88f91dd42339458cdfb518d98a3bc3d60e38d44198c897e12f4069d113eb0151067365637265742103e05ce435e462ec503143305feb6c00e06a3ad52fbf939e85c65f3a765bb7baacffffffff0104740000000000001976a9149a6b60f74a6bae176df05c3b0a118f85bab5c58588ac00000000')
   })
 })
