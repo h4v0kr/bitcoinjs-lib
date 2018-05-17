@@ -71,12 +71,13 @@ function encode (secretHash, pubKeyHash, refundPubKeyHash, nLockTime) {
 
 function decode (buffer) {
   typeforce(check, buffer)
+  var lockTimeSize = buffer[49]
 
   return {
     secretHash: buffer.slice(6, 26),
     pubKeyHash: buffer.slice(28, 48),
-    nLockTime: buffer.slice(50, 54),
-    refundPubKeyHash: buffer.slice(57, 77)
+    nLockTime: buffer.slice(50, 50 + lockTimeSize),
+    refundPubKeyHash: buffer.slice(53 + lockTimeSize, 73 lockTimeSize)
   }
 }
 
