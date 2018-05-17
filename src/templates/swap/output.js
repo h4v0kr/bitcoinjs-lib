@@ -19,8 +19,11 @@ var bip65 = require('bip65')
 
 function check (script) {
   var buffer = bscript.compile(script)
+  var lockTimeSize = buffer[49]
 
-  return buffer.length === 80 &&
+  return lockTimeSize <= 4 &&
+    lockTimeSize >= 1 &&
+    buffer.length === 76 + lockTimeSize &&
     buffer[0] === OPS.OP_DUP &&
     buffer[1] === OPS.OP_HASH160 &&
     buffer[2] === OPS.OP_2SWAP &&
@@ -30,13 +33,12 @@ function check (script) {
     buffer[26] === OPS.OP_EQUALVERIFY &&
     buffer[27] === 0x14 &&
     buffer[48] === OPS.OP_ELSE &&
-    buffer[49] === 0x04 &&
-    buffer[54] === OPS.OP_CHECKLOCKTIMEVERIFY &&
-    buffer[55] === OPS.OP_2DROP &&
-    buffer[56] === 0x14 &&
-    buffer[77] === OPS.OP_ENDIF &&
-    buffer[78] === OPS.OP_EQUALVERIFY &&
-    buffer[79] === OPS.OP_CHECKSIG
+    buffer[50 + lockTimeSize] === OPS.OP_CHECKLOCKTIMEVERIFY &&
+    buffer[51 + lockTimeSize] === OPS.OP_2DROP &&
+    buffer[52 + lockTimeSize] === 0x14 &&
+    buffer[73 + lockTimeSize] === OPS.OP_ENDIF &&
+    buffer[74 + lockTimeSize] === OPS.OP_EQUALVERIFY &&
+    buffer[75 + lockTimeSize] === OPS.OP_CHECKSIG
 }
 
 check.toJSON = function () { return 'pubKeyHash2 output' }
