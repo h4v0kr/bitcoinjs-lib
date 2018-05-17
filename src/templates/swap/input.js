@@ -17,26 +17,24 @@ function checkRedeem (script) {
   var chunks = bscript.decompile(script)
 
   return check(script) &&
-    chunks[2] === OPS.OP_TRUE
+    chunks[2] === 1
 }
 
 function checkRefund (script) {
   var chunks = bscript.decompile(script)
 
   return check(script) &&
-    chunks[2] === OPS.OP_FALSE &&
-    chunks[1] === OPS.OP_0
+    chunks[2] === 0 &&
+    chunks[1] === 0
 }
 
 function encodeStack (signature, pubKey, isRedeem, secret) {
   typeforce({
     signature: bscript.isCanonicalSignature,
-    pubKey: bscript.isCanonicalPubKey,
-    secret: bscript.isCanonicalSecret
+    pubKey: bscript.isCanonicalPubKey
   }, {
     signature: signature,
-    pubKey: pubKey,
-    secret: secret
+    pubKey: pubKey
   })
 
   const redeem = isRedeem ? OPS.OP_TRUE : OPS.OP_FALSE

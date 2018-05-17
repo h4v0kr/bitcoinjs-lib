@@ -260,7 +260,7 @@ describe('bitcoinjs-lib (transactions)', function () {
     var pubKeyHash = bitcoin.crypto.hash160(bob.getPublicKeyBuffer())
     var secretHash = bitcoin.crypto.hash160('secret')
 
-    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, pubKeyHash, refundPubKeyHash, 1000) // LockTime of 1000 seconds
+    var scriptPubKey = bitcoin.script.swap.output.encode(secretHash, pubKeyHash, refundPubKeyHash, Math.round(Date.now() / 1000 + 1000)) // LockTime of 1000 seconds
 
     txb.addOutput(scriptPubKey, 298000)
 
