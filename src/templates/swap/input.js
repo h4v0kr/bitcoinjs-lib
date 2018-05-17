@@ -8,10 +8,9 @@ function check (script) {
 
   return chunks.length === 4 &&
     bscript.isCanonicalSignature(chunks[0]) &&
-    bscript.isCanonicalPubKey(chunks[3]) &&
-    bscript.isCanonicalSecret(chunks[1])
+    bscript.isCanonicalPubKey(chunks[3])
 }
-check.toJSON = function () { return 'pubKeyHash input' }
+check.toJSON = function () { return 'swap input' }
 
 function checkRedeem (script) {
   var chunks = bscript.decompile(script)
