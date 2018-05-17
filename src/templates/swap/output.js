@@ -47,10 +47,6 @@ function encode (secretHash, pubKeyHash, refundPubKeyHash, nLockTime) {
   typeforce(types.Hash160bit, refundPubKeyHash)
   typeforce(types.Hash160bit, pubKeyHash)
 
-  let now = Date.now();
-  let nLockTime1 = Math.round(now / 1000) + nLockTime;
-  let nLockTime2 = bip65.encode({ utc: nLockTime1 });
-
   return bscript.compile([
     OPS.OP_DUP,
     OPS.OP_HASH160,
@@ -61,7 +57,7 @@ function encode (secretHash, pubKeyHash, refundPubKeyHash, nLockTime) {
     OPS.OP_EQUALVERIFY,
     pubKeyHash,
     OPS.OP_ELSE,
-    bscript.number.encode(nLockTime2),
+    bscript.number.encode(nLockTime),
     OPS.OP_CHECKLOCKTIMEVERIFY,
     OPS.OP_2DROP,
     refundPubKeyHash,
