@@ -77,7 +77,7 @@ function decode (buffer) {
     secretHash: buffer.slice(6, 26),
     pubKeyHash: buffer.slice(28, 48),
     nLockTime: buffer.slice(50, 50 + lockTimeSize),
-    refundPubKeyHash: buffer.slice(53 + lockTimeSize, 73 lockTimeSize)
+    refundPubKeyHash: buffer.slice(53 + lockTimeSize, 73 + lockTimeSize)
   }
 }
 
