@@ -15,6 +15,7 @@ var networks = require('../../networks')
 var typeforce = require('typeforce')
 var OPS = require('bitcoin-ops')
 var bigi = require('bigi')
+var bip65 = require('bip65')
 
 function check (script) {
   var buffer = bscript.compile(script)
@@ -48,7 +49,7 @@ function encode (secretHash, pubKeyHash, refundPubKeyHash, nLockTime) {
 
   let now = Date.now();
   let nLockTime1 = Math.round(now / 1000) + nLockTime;
-  let nLockTime2 = bigi.fromHex(nLockTime1.toString(16)).toBuffer();
+  let nLockTime2 = bip65.encode({ utc: nLockTime1 });
 
   return bscript.compile([
     OPS.OP_DUP,
@@ -60,7 +61,7 @@ function encode (secretHash, pubKeyHash, refundPubKeyHash, nLockTime) {
     OPS.OP_EQUALVERIFY,
     pubKeyHash,
     OPS.OP_ELSE,
-    nLockTime2,
+    bscript.number.encode(nLockTime2),
     OPS.OP_CHECKLOCKTIMEVERIFY,
     OPS.OP_2DROP,
     refundPubKeyHash,
