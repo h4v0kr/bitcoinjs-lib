@@ -19,7 +19,7 @@ var types = {
   P2WPKH: 'witnesspubkeyhash',
   P2WSH: 'witnessscripthash',
   WITNESS_COMMITMENT: 'witnesscommitment',
-  SWAP: 'swap',
+  SWAP: 'swap'
 }
 
 function classifyOutput (script) {

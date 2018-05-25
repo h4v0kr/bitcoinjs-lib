@@ -22,7 +22,7 @@ function encode (data) {
 function decode (buffer) {
   typeforce(check, buffer)
 
-  return buffer.slice(2)
+  return bscript.decompile(buffer)[1]
 }
 
 module.exports = {
