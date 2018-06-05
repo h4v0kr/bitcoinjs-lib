@@ -7,6 +7,7 @@ var typeforce = require('typeforce')
 var p2ms = require('../multisig/')
 var p2pk = require('../pubkey/')
 var p2pkh = require('../pubkeyhash/')
+var swap = require('../swap/')
 var p2wpkho = require('../witnesspubkeyhash/output')
 var p2wsho = require('../witnessscripthash/output')
 
@@ -33,6 +34,9 @@ function check (script, allowIncomplete) {
   }
 
   // match types
+  if (swap.input.check(scriptSigChunks) &&
+    swap.output.check(redeemScriptChunks)) return true
+
   if (p2pkh.input.check(scriptSigChunks) &&
     p2pkh.output.check(redeemScriptChunks)) return true
 
