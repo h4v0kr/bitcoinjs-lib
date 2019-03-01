@@ -37,7 +37,7 @@ function encodeStack (signature, pubKey, isRedeem, secret) {
   })
 
   const redeem = isRedeem ? OPS.OP_TRUE : OPS.OP_FALSE
-  secret = isRedeem ? secret : OPS.OP_0
+  secret = isRedeem ? secret : []
 
   return [signature, pubKey, secret, redeem]
 }
